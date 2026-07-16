@@ -5,7 +5,7 @@
 //  original design - not a copy of any commercial title.
 // ============================================================
 
-#include <glad/glad.h>
+#include <glad/gl.h>
 #include <GLFW/glfw3.h>
 
 #include <iostream>
@@ -206,7 +206,7 @@ int main()
     glfwMakeContextCurrent(window);
     glfwSwapInterval(g_settings.vsync ? 1 : 0);
 
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+    if (!gladLoadGL((GLADloadfunc)glfwGetProcAddress))
     {
         std::cerr << "Failed to initialize GLAD" << std::endl;
         return -1;
