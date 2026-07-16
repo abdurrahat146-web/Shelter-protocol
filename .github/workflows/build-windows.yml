@@ -22,8 +22,16 @@ jobs:
             mingw-w64-x86_64-gcc
             mingw-w64-x86_64-cmake
             mingw-w64-x86_64-glfw
-            mingw-w64-x86_64-glad
+            mingw-w64-x86_64-python
+            mingw-w64-x86_64-python-pip
             make
+            git
+            curl
+            unzip
+
+      - name: Install glad's Python dependencies
+        shell: msys2 {0}
+        run: pip install jinja2
 
       - name: Build the game
         shell: msys2 {0}
