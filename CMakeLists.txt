@@ -16,11 +16,23 @@ find_package(glfw3 REQUIRED)
 target_link_libraries(ShelterProtocol PRIVATE glfw)
 
 # --------------------------------------------------------
-#  GLAD - OpenGL function loader. Provided by MSYS2 package
-#  mingw-w64-x86_64-glad in the GitHub Actions workflow.
+#  GLAD - OpenGL function loader. There is no MSYS2/pacman
+#  package for this, so it is fetched and built from source
+#  at configure time using CMake's FetchContent.
 # --------------------------------------------------------
-find_package(glad REQUIRED)
-target_link_libraries(ShelterProtocol PRIVATE glad::glad)
+include(FetchContent)
+FetchContent_Declare(
+    glad
+    GIT_REPOSITORY https://github.com/Dav1dde/glad.git
+    GIT_TAG        v2.0.8
+    SOURCE_SUBDIR  cmake
+)
+FetchContent_MakeAvailable(glad)
+
+# glad_add_library generates the OpenGL 3.3 core loader from the
+# Khronos spec at build time and creates a target we can link to.
+glad_add_library(glad_gl_core_33 REPRODUCIBLE API gl:core=3.3)
+target_link_libraries(ShelterProtocol PRIVATE glad_gl_core_33)
 
 # OpenGL itself
 find_package(OpenGL REQUIRED)
