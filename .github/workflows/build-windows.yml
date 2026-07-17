@@ -37,13 +37,14 @@ jobs:
         shell: msys2 {0}
         run: |
           cd "$GITHUB_WORKSPACE"
+          rm -rf build
           mkdir -p build
           cd build
           cmake -G "MinGW Makefiles" \
             -DCMAKE_BUILD_TYPE=Release \
-            -DCMAKE_C_COMPILER=gcc \
-            -DCMAKE_CXX_COMPILER=g++ \
-            -DCMAKE_MAKE_PROGRAM=mingw32-make \
+            -DCMAKE_C_COMPILER=/mingw64/bin/gcc.exe \
+            -DCMAKE_CXX_COMPILER=/mingw64/bin/g++.exe \
+            -DCMAKE_MAKE_PROGRAM=/mingw64/bin/mingw32-make.exe \
             ..
           cmake --build . --config Release
 
