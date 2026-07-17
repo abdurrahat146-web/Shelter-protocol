@@ -33,8 +33,12 @@ jobs:
         shell: msys2 {0}
         run: pip install jinja2
 
+      - name: Add MinGW to PATH
+        run: echo "D:/a/_temp/msys64/mingw64/bin" >> $GITHUB_PATH
+        shell: bash
+
       - name: Build the game
-        shell: msys2 {0}
+        shell: bash
         run: |
           cd "$GITHUB_WORKSPACE"
           rm -rf build
@@ -42,9 +46,6 @@ jobs:
           cd build
           cmake -G "MinGW Makefiles" \
             -DCMAKE_BUILD_TYPE=Release \
-            -DCMAKE_C_COMPILER=/mingw64/bin/gcc.exe \
-            -DCMAKE_CXX_COMPILER=/mingw64/bin/g++.exe \
-            -DCMAKE_MAKE_PROGRAM=/mingw64/bin/mingw32-make.exe \
             ..
           cmake --build . --config Release
 
@@ -55,11 +56,16 @@ jobs:
           cp build/ShelterProtocol.exe dist/ 2>/dev/null || cp build/*.exe dist/
           cp -r shaders dist/
           # Bundle the MinGW runtime DLLs so the exe runs on a clean
-          # Windows machine without needing MSYS2 installed.
-          cp /c/msys64/mingw64/bin/libgcc_s_seh-1.dll dist/ 2>/dev/null || true
-          cp /c/msys64/mingw64/bin/libstdc++-6.dll dist/ 2>/dev/null || true
-          cp /c/msys64/mingw64/bin/libwinpthread-1.dll dist/ 2>/dev/null || true
-          cp /c/msys64/mingw64/bin/glfw3.dll dist/ 2>/dev/null || true
+          # Windows machine without needing MSYS2 installed. The runner
+          # installs MSYS2 under D:/a/_temp/msys64, not C:/msys64.
+          MINGW_BIN="D:/a/_temp/msys64/mingw64/bin"
+          if [ ! -d "$MINGW_BIN" ]; then MINGW_BIN="/c/msys64/mingw64/bin"; fi
+          cp "$MINGW_BIN/libgcc_s_seh-1.dll" dist/ 2>/dev/null || true
+          cp "$MINGW_BIN/libstdc++-6.dll" dist/ 2>/dev/null || true
+          cp "$MINGW_BIN/libwinpthread-1.dll" dist/ 2>/dev/null || true
+          cp "$MINGW_BIN/glfw3.dll" dist/ 2>/dev/null || true
+          echo "Contents of dist/:"
+          ls -la dist/
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
