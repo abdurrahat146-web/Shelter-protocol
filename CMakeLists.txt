@@ -25,13 +25,15 @@ FetchContent_Declare(
     glad
     GIT_REPOSITORY https://github.com/Dav1dde/glad.git
     GIT_TAG        v2.0.8
+    GIT_SHALLOW    TRUE
+    GIT_PROGRESS   TRUE
     SOURCE_SUBDIR  cmake
 )
 FetchContent_MakeAvailable(glad)
 
 # glad_add_library generates the OpenGL 3.3 core loader from the
 # Khronos spec at build time and creates a target we can link to.
-glad_add_library(glad_gl_core_33 REPRODUCIBLE API gl:core=3.3)
+glad_add_library(glad_gl_core_33 REPRODUCIBLE LOADER API gl:core=3.3)
 target_link_libraries(ShelterProtocol PRIVATE glad_gl_core_33)
 
 # OpenGL itself
